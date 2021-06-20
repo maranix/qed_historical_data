@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -54,6 +56,16 @@ var apiUrl = "https://www.nseindia.com/api/historical/fo/derivatives?&from="+fro
 var	symbolUrl = "https://www.nseindia.com/get-quotes/derivatives?symbol="
 
 func main() {
+
+	// Check if spreadsheets folder is available or not
+	if _, err := os.Stat("spreadsheets"); os.IsNotExist(err) {
+		fmt.Println("Directory does not exist, creating.")
+		err := os.Mkdir("spreadsheets", 0777)
+		if err != nil {
+			fmt.Printf("\nCould not create spreadsheet directory\nReason: %v", err)
+		}
+	}
+
 	wg.Add(len(futureList))
 	for i := 0 ; i < len(futureList) ; i++ {
 		go process(symbolUrl+futureList[i], &futureList[i])
