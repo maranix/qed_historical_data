@@ -48,11 +48,13 @@ var futureList = []string{
 	"TECHM","TITAN","TORNTPHARM","TORNTPOWER","TRENT","TVSMOTOR","UBL","ULTRACEMCO","UPL","VEDL","VOLTAS","WIPRO","ZEEL",
 }
 
-var from, to, expire = "17-05-2021", "17-06-2021", "24-Jun-2021"
+var todate = time.Now().Format("02-01-2006")
+var from = time.Now().AddDate(0, 0, -30).Format("02-01-2006")
+var expire =  "29-Jul-2021"
 
 var v interface{}
 var wg sync.WaitGroup
-var apiUrl = "https://www.nseindia.com/api/historical/fo/derivatives?&from="+from+"&to="+to+"&expiryDate="+expire+"&instrumentType=FUTSTK&symbol="
+var apiUrl = "https://www.nseindia.com/api/historical/fo/derivatives?&from="+from+"&to="+todate+"&expiryDate="+expire+"&instrumentType=FUTSTK&symbol="
 var	symbolUrl = "https://www.nseindia.com/get-quotes/derivatives?symbol="
 
 func main() {
