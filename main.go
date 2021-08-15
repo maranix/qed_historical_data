@@ -11,51 +11,51 @@ import (
 	"sync"
 	"time"
 
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/koron/go-dproxy"
+	"github.com/xuri/excelize/v2"
 )
 
 var mapOrder = []string{
-		"FH_TIMESTAMP", "FH_EXPIRY_DT", "FH_OPTION_TYPE", "FH_STRIKE_PRICE", "FH_OPENING_PRICE",
-		"FH_TRADE_HIGH_PRICE", "FH_TRADE_LOW_PRICE", "FH_CLOSING_PRICE", "FH_LAST_TRADED_PRICE",
-		"FH_SETTLE_PRICE", "FH_TOT_TRADED_QTY", "FH_TOT_TRADED_VAL", "CALCULATED_PREMIUM_VAL",
-		"FH_OPEN_INT", "FH_CHANGE_IN_OI",
+	"FH_TIMESTAMP", "FH_EXPIRY_DT", "FH_OPTION_TYPE", "FH_STRIKE_PRICE", "FH_OPENING_PRICE",
+	"FH_TRADE_HIGH_PRICE", "FH_TRADE_LOW_PRICE", "FH_CLOSING_PRICE", "FH_LAST_TRADED_PRICE",
+	"FH_SETTLE_PRICE", "FH_TOT_TRADED_QTY", "FH_TOT_TRADED_VAL", "CALCULATED_PREMIUM_VAL",
+	"FH_OPEN_INT", "FH_CHANGE_IN_OI",
 }
 
-var columnNames = []string {
+var columnNames = []string{
 	"Date", "Expiry Date", "Option Type", "Strike Price", "Open Price", "High Price", " Low Price",
 	"Close Price", "Last Price", "Settled Price", "Volume", "Value", "Premium Value", "Open Interest",
 	"Change in OI",
 }
 
 var futureList = []string{
-	"AARTIIND","ACC","ADANIENT","ADANIPORTS","ALKEM","AMARAJABAT","AMBUJACEM","APLLTD",
-	"APOLLOHOSP","APOLLOTYRE","ASHOKLEY","ASIANPAINT","AUBANK","AUROPHARMA","AXISBANK",
-	"BAJAJ-AUTO","BAJAJFINSV","BAJFINANCE","BALKRISIND","BANDHANBNK","BANKBARODA",
-	"BATAINDIA","BEL","BERGEPAINT","BHARATFORG","BHARTIARTL","BHEL","BIOCON","BOSCHLTD","BPCL",
-	"BRITANNIA","CADILAHC","CANBK","CHOLAFIN","CIPLA","COALINDIA","COFORGE","COLPAL",
-	"CONCOR","CUB","CUMMINSIND","DABUR","DEEPAKNTR","DIVISLAB","DLF","DRREDDY","EICHERMOT",
-	"ESCORTS","EXIDEIND","FEDERALBNK","GAIL","GLENMARK","GMRINFRA","GODREJCP","GODREJPROP",
-	"GRANULES","GRASIM","GUJGASLTD","HAVELLS","HCLTECH","HDFC","HDFCAMC","HDFCBANK","HDFCLIFE",
-	"HEROMOTOCO","HINDALCO","HINDPETRO","HINDUNILVR","IBULHSGFIN","ICICIBANK","ICICIGI","ICICIPRULI",
-	"IDEA","IDFCFIRSTB","IGL","INDIGO","INDUSINDBK","INDUSTOWER","INFY","IOC","IRCTC","ITC",
-	"JINDALSTEL","JSWSTEEL","JUBLFOOD","KOTAKBANK","LALPATHLAB","LICHSGFIN","LT","LTI",
-	"LTTS","LUPIN","MANAPPURAM","MARICO","MARUTI","MCDOWELL-N","MFSL","MGL","MINDTREE",
-	"MOTHERSUMI","MPHASIS","MRF","MUTHOOTFIN","NAM-INDIA","NATIONALUM","NAUKRI","NAVINFLUOR","NESTLEIND",
-	"NMDC","NTPC","ONGC","PAGEIND","PEL","PETRONET","PFC","PFIZER","PIDILITIND","PIIND","PNB",
-	"POWERGRID","PVR","RAMCOCEM","RBLBANK","RECLTD","RELIANCE","SAIL","SBILIFE","SBIN","SHREECEM","SIEMENS",
-	"SRF","SRTRANSFIN","SUNPHARMA","SUNTV","TATACHEM","TATACONSUM","TATAMOTORS","TATAPOWER","TATASTEEL","TCS",
-	"TECHM","TITAN","TORNTPHARM","TORNTPOWER","TRENT","TVSMOTOR","UBL","ULTRACEMCO","UPL","VEDL","VOLTAS","WIPRO","ZEEL",
+	"AARTIIND", "ACC", "ADANIENT", "ADANIPORTS", "ALKEM", "AMARAJABAT", "AMBUJACEM", "APLLTD",
+	"APOLLOHOSP", "APOLLOTYRE", "ASHOKLEY", "ASIANPAINT", "AUBANK", "AUROPHARMA", "AXISBANK",
+	"BAJAJ-AUTO", "BAJAJFINSV", "BAJFINANCE", "BALKRISIND", "BANDHANBNK", "BANKBARODA",
+	"BATAINDIA", "BEL", "BERGEPAINT", "BHARATFORG", "BHARTIARTL", "BHEL", "BIOCON", "BOSCHLTD", "BPCL",
+	"BRITANNIA", "CADILAHC", "CANBK", "CHOLAFIN", "CIPLA", "COALINDIA", "COFORGE", "COLPAL",
+	"CONCOR", "CUB", "CUMMINSIND", "DABUR", "DEEPAKNTR", "DIVISLAB", "DLF", "DRREDDY", "EICHERMOT",
+	"ESCORTS", "EXIDEIND", "FEDERALBNK", "GAIL", "GLENMARK", "GMRINFRA", "GODREJCP", "GODREJPROP",
+	"GRANULES", "GRASIM", "GUJGASLTD", "HAVELLS", "HCLTECH", "HDFC", "HDFCAMC", "HDFCBANK", "HDFCLIFE",
+	"HEROMOTOCO", "HINDALCO", "HINDPETRO", "HINDUNILVR", "IBULHSGFIN", "ICICIBANK", "ICICIGI", "ICICIPRULI",
+	"IDEA", "IDFCFIRSTB", "IGL", "INDIGO", "INDUSINDBK", "INDUSTOWER", "INFY", "IOC", "IRCTC", "ITC",
+	"JINDALSTEL", "JSWSTEEL", "JUBLFOOD", "KOTAKBANK", "LALPATHLAB", "LICHSGFIN", "LT", "LTI",
+	"LTTS", "LUPIN", "MANAPPURAM", "MARICO", "MARUTI", "MCDOWELL-N", "MFSL", "MGL", "MINDTREE",
+	"MOTHERSUMI", "MPHASIS", "MRF", "MUTHOOTFIN", "NAM-INDIA", "NATIONALUM", "NAUKRI", "NAVINFLUOR", "NESTLEIND",
+	"NMDC", "NTPC", "ONGC", "PAGEIND", "PEL", "PETRONET", "PFC", "PFIZER", "PIDILITIND", "PIIND", "PNB",
+	"POWERGRID", "PVR", "RAMCOCEM", "RBLBANK", "RECLTD", "RELIANCE", "SAIL", "SBILIFE", "SBIN", "SHREECEM", "SIEMENS",
+	"SRF", "SRTRANSFIN", "SUNPHARMA", "SUNTV", "TATACHEM", "TATACONSUM", "TATAMOTORS", "TATAPOWER", "TATASTEEL", "TCS",
+	"TECHM", "TITAN", "TORNTPHARM", "TORNTPOWER", "TRENT", "TVSMOTOR", "UBL", "ULTRACEMCO", "UPL", "VEDL", "VOLTAS", "WIPRO", "ZEEL",
 }
 
 var todate = time.Now().Format("02-01-2006")
 var from = time.Now().AddDate(0, 0, -30).Format("02-01-2006")
-var expire =  "29-Jul-2021"
+var expire = "29-Jul-2021"
 
 var v interface{}
 var wg sync.WaitGroup
-var apiUrl = "https://www.nseindia.com/api/historical/fo/derivatives?&from="+from+"&to="+todate+"&expiryDate="+expire+"&instrumentType=FUTSTK&symbol="
-var	symbolUrl = "https://www.nseindia.com/get-quotes/derivatives?symbol="
+var apiUrl = "https://www.nseindia.com/api/historical/fo/derivatives?&from=" + from + "&to=" + todate + "&expiryDate=" + expire + "&instrumentType=FUTSTK&symbol="
+var symbolUrl = "https://www.nseindia.com/get-quotes/derivatives?symbol="
 
 func main() {
 
@@ -69,7 +69,7 @@ func main() {
 	}
 
 	wg.Add(len(futureList))
-	for i := 0 ; i < len(futureList) ; i++ {
+	for i := 0; i < len(futureList); i++ {
 		go process(symbolUrl+futureList[i], &futureList[i])
 	}
 	wg.Wait()
@@ -125,7 +125,7 @@ func apiFetch(url string, cookie []*http.Cookie) *string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	if res.StatusCode != 200 {
 		log.Fatalf("StatusCode error: %v\n\nTrying again....", res.StatusCode)
 	} else {
@@ -158,7 +158,7 @@ func process(url string, symbol *string) {
 	v := dproxy.New(v)
 	length := v.M("data").ProxySet().Len()
 
-	for i := 0 ; i < length ; i++ {
+	for i := 0; i < length; i++ {
 		column = 1
 		m, err := v.M("data").A(i).Map()
 		if err != nil {
@@ -169,11 +169,11 @@ func process(url string, symbol *string) {
 		delete(m, "TIMESTAMP")
 		delete(m, "FH_INSTRUMENT")
 		delete(m, "FH_MARKET_TYPE")
-		for i := 0; i < len(mapOrder); i++ {	
+		for i := 0; i < len(mapOrder); i++ {
 			for k, v := range m {
 				if k == mapOrder[i] {
 					col, _ := excelize.ColumnNumberToName(column)
-					err := f.SetCellValue("Sheet1", col+strconv.Itoa(row),v)
+					err := f.SetCellValue("Sheet1", col+strconv.Itoa(row), v)
 					if err != nil {
 						log.Fatal(err)
 					}
@@ -184,15 +184,15 @@ func process(url string, symbol *string) {
 		row++
 	}
 
-	for i := 0 ; i < len(columnNames) ; i++ {
-		col, _ := excelize.ColumnNumberToName(i+1)
+	for i := 0; i < len(columnNames); i++ {
+		col, _ := excelize.ColumnNumberToName(i + 1)
 		err := f.SetCellValue("Sheet1", col+"1", columnNames[i])
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	
-	if err := f.SaveAs("spreadsheets/"+*symbol+".xlsx"); err != nil {
+
+	if err := f.SaveAs("spreadsheets/" + *symbol + ".xlsx"); err != nil {
 		log.Fatal(err)
 	}
 	wg.Done()
